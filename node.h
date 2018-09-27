@@ -29,17 +29,18 @@ struct Node {
         delete this;
     }
     void print() {
-        cout << "[";
-
         if (left)
             left->print();
 
-        cout << data;
+        cout << data << " ";
 
         if (right)
             right->print();
+    }
+    int height() {
+        int h_left = left ? left->height() : 0, h_right = right ? right->height() : 0;
 
-        cout << "]";
+        return 1 + (h_left > h_right ? h_left : h_right);
     }
 };
 

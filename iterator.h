@@ -1,4 +1,3 @@
-
 #include <stack>
 #include "node.h"
 
