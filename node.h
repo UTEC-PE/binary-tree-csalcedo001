@@ -37,6 +37,34 @@ struct Node {
         if (right)
             right->print();
     }
+    void print(int direction) {
+        if (direction < 0)
+            cout << data;
+
+        if (left) {
+            cout << "[";
+            left->print(direction);
+
+            if (!right || !direction)
+                cout << "]";
+        }
+
+        if (!direction)
+            cout << data;
+        else if (right && left)
+            cout << ",";
+
+        if (right) {
+            if (!left || !direction)
+                cout << "[";
+
+            right->print(direction);
+            cout << "]";
+        }
+
+        if (direction > 0)
+            cout << data;
+    }
     int height() {
         int h_left = left ? left->height() : 0, h_right = right ? right->height() : 0;
 

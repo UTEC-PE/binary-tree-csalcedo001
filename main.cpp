@@ -21,6 +21,10 @@ int main (void) {
     cout << endl << "Print structure" << endl;
 
     tree.print();
+    
+    tree.print(-1);
+    tree.print(0);
+    tree.print(1);
 
 
     cout << endl << "Supports double insertions" << endl;

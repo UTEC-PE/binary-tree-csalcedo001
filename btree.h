@@ -106,6 +106,12 @@ class BinaryTree {
 
             cout << endl;
         }
+        void print(int direction) {
+            if (head->right)
+                head->right->print(direction);
+
+            cout << endl;
+        }
         int length() {
             return nodes;
         }
