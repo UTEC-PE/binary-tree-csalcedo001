@@ -1,90 +1,100 @@
 #include <iostream>
-#include <stack>
+#include <algorithm>    
+#include <vector>
+#include <random>
+#include <assert.h>
 
 #include "btree.h"
 
 using namespace std;
 
-int main (void) {
-    BinaryTree <int> tree;
+#define RANGE_MIN 100
+#define RANGE_MAX 500
+#define MIN_NUMBER 0
+#define MAX_NUMBER 500
 
-    cout << endl << "Insert nodes" << endl;
-    tree.insert(3);
-    tree.insert(1);
-    tree.insert(0);
-    tree.insert(2);
-    tree.insert(5);
-    tree.insert(4);
-    tree.insert(6);
+mt19937 rng;
+vector<int> helper;
 
+int generateRandomInt(int min, int max);
+void insertIntoTree(BinaryTree<int> &tester);
+void removeFromTree(BinaryTree<int> &tester);
+void sortAndPruneHelper();
+bool testTreeCompletion(BinaryTree<int>* tester);
+void print(BinaryTree<int>* tester);
 
-    cout << endl << "Print structure" << endl;
+int main(int argc, char *argv[]) {
+    rng.seed(random_device()());
+    cout << "===========================================================" << endl;
+    cout << "\tBinary Tree Practice" << endl;
+    cout << "===========================================================" << endl << endl;
 
-    tree.print();
-    
-    tree.print(-1);
-    tree.print(0);
-    tree.print(1);
+    BinaryTree<int> tester;
+    const int numberOfElements = generateRandomInt(RANGE_MIN, RANGE_MAX);
+    for (int i = 0; i < numberOfElements; i++) {
+        insertIntoTree(tester);
+    }
+    sortAndPruneHelper();
 
+    assert(tester.weight() == helper.size() && "Something is wrong with the insert or weight method");
 
-    cout << endl << "Supports double insertions" << endl;
+    assert(testTreeCompletion(&tester) && "Something is wrong with the insert method or the iterator");
 
-    for (int i = 0; i < 7; i++)
-        tree.insert(i);
+    const int elementsToRemove = generateRandomInt(0, helper.size() - 1);
+    for (int i = 0; i < elementsToRemove; i++) {
+        removeFromTree(tester);
+    }
 
-    tree.print();
+    assert(testTreeCompletion(&tester) && "Something is wrong with the remove method or the iterator");
 
+    print(&tester);
 
+    return EXIT_SUCCESS;
+}
 
+int generateRandomInt(int min, int max) {
+    uniform_int_distribution<mt19937::result_type> distribution(min, max);
+    return distribution(rng);
+}
 
-    cout << endl << "Iterate through the tree" << endl;
+void insertIntoTree(BinaryTree<int> &tester) {
+    const int numberToInsert = generateRandomInt(MIN_NUMBER, MAX_NUMBER);
+    helper.push_back(numberToInsert);
+    tester.insert(numberToInsert);
+}
 
-    for (BinaryTree <int>::iterator it = tree.begin(); it != tree.end(); ++it)
-        cout << *it * *it<< " ";
+void removeFromTree(BinaryTree<int> &tester) {
+    const int positionToRemove = generateRandomInt(0, helper.size() - 1);
+    const int element = helper.at(positionToRemove);
+    helper.erase(helper.begin() + positionToRemove);
+    tester.remove(element);
+}
 
+void sortAndPruneHelper() {
+    sort(helper.begin(), helper.end());
+    auto last = std::unique(helper.begin(), helper.end());
+    helper.erase(last, helper.end()); 
+}
+
+bool testTreeCompletion(BinaryTree<int>* tester) {
+    int i = 0;
+    for (Iterator<int> it = tester->begin(); it != tester->end(); ++it) {
+        if (*it != helper.at(i)) {
+            return false;
+        }
+        i++;
+    }
+    return true;
+}
+
+void print(BinaryTree<int>* tester) {
+    for (Iterator<int> it = tester->begin(); it != tester->end(); ++it) {
+        cout << *it << " ";
+    }
+    cout << endl << endl;
+
+    for (int i = 0; i < helper.size(); i++) {
+        cout << helper.at(i) << " ";
+    }
     cout << endl;
-
-
-    cout << endl << "Calculate height" << endl;
-    cout << tree.height() << endl;
-
-    cout << endl << "Calculate weight" << endl;
-    cout << tree.weight() << endl;
-
-
-
-    cout << endl << "Remove nodes" << endl;
-
-    tree.remove(0);
-    tree.print();
-
-    tree.remove(1);
-    tree.print();
-
-    tree.remove(5);
-    tree.print();
-
-
-
-    cout << endl << "Elements not present in the tree aren't removed" << endl << endl;
-
-    tree.remove(7);
-    tree.print();
-
-
-
-    cout << "Continue removing..." << endl;
-    tree.remove(3);
-    tree.print();
-
-    tree.remove(2);
-    tree.print();
-
-    tree.remove(4);
-    tree.print();
-
-    tree.remove(6);
-    tree.print();
-
-    return 0;
 }
